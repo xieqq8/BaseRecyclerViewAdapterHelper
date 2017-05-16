@@ -13,7 +13,6 @@ import com.chad.baserecyclerviewadapterhelper.adapter.AnimationAdapter;
 import com.chad.baserecyclerviewadapterhelper.animation.CustomAnimation;
 import com.chad.baserecyclerviewadapterhelper.entity.Status;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.kyleduo.switchbutton.SwitchButton;
 
@@ -55,9 +54,9 @@ public class AnimationUseActivity extends Activity {
         mAnimationAdapter = new AnimationAdapter();
         mAnimationAdapter.openLoadAnimation();
         mAnimationAdapter.setNotDoAnimationCount(mFirstPageItemCount);
-        mRecyclerView.addOnItemTouchListener(new OnItemChildClickListener() {
+        mAnimationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
-            public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 String content = null;
                 Status status = (Status) adapter.getItem(position);
                 switch (view.getId()) {
@@ -70,10 +69,12 @@ public class AnimationUseActivity extends Activity {
                         Toast.makeText(AnimationUseActivity.this, content, Toast.LENGTH_LONG).show();
                         break;
                     case R.id.tweetText:
+                        content = "tweetText:" + status.getUserName();
+                        Toast.makeText(AnimationUseActivity.this, content, Toast.LENGTH_LONG).show();
                         // you have set clickspan .so there should not solve any click event ,just empty
                         break;
-                }
 
+                }
             }
         });
         mRecyclerView.setAdapter(mAnimationAdapter);
@@ -111,6 +112,7 @@ public class AnimationUseActivity extends Activity {
                 mRecyclerView.setAdapter(mAnimationAdapter);
             }
         });
+        mAnimationAdapter.isFirstOnly(false);//init firstOnly state
         SwitchButton switchButton = (SwitchButton) findViewById(R.id.switch_button);
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

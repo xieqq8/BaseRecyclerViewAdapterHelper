@@ -1,6 +1,7 @@
 package com.chad.baserecyclerviewadapterhelper;
 
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -19,7 +20,8 @@ import java.util.Random;
  */
 public class ExpandableUseActivity extends BaseActivity {
     RecyclerView mRecyclerView;
-
+    ExpandableItemAdapter adapter;
+    ArrayList<MultiItemEntity> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,18 +30,23 @@ public class ExpandableUseActivity extends BaseActivity {
         setContentView(R.layout.activity_expandable_item_use);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        ArrayList<MultiItemEntity> list = generateData();
-        ExpandableItemAdapter adapter = new ExpandableItemAdapter(list);
+        list = generateData();
+        adapter = new ExpandableItemAdapter(list);
 
+        final GridLayoutManager manager = new GridLayoutManager(this, 3);
+        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return adapter.getItemViewType(position) == ExpandableItemAdapter.TYPE_PERSON ? 1 : manager.getSpanCount();
+            }
+        });
 
         mRecyclerView.setAdapter(adapter);
-
-//        adapter.expandAll(3, true);
+        // important! setLayoutManager should be called after setAdapter
+        mRecyclerView.setLayoutManager(manager);
+        adapter.expandAll();
     }
-
-
 
     private ArrayList<MultiItemEntity> generateData() {
         int lv0Count = 9;
